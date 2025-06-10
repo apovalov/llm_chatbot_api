@@ -7,6 +7,6 @@ class Question(BaseModel):
     text: str = Field(
         ...,
         min_length=1,
-        max_length=1_024,
+        max_length=1024,
         description="User question text",
     )

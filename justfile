@@ -1,4 +1,4 @@
-# default “just” task when no arguments are provided
+# default "just" task when no arguments are provided
 default: server
 
 # ────────────────────────────────────────
@@ -8,7 +8,7 @@ server:
 
 # Run unit tests
 test:
-    pytest -q
+    PYTHONPATH=. uv run pytest
 
 # Static analysis + autoformat
 lint:
