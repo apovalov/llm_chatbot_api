@@ -199,3 +199,66 @@ Every API response includes performance headers:
 
 See `PROFILING.md` for complete documentation and `PROFILING_REPORT.md` for latest analysis.
 
+## 📖 Enhanced API Documentation
+
+The API features comprehensive auto-generated documentation with:
+
+- **Interactive Swagger UI**: Available at `/docs`
+- **Alternative ReDoc**: Available at `/redoc`
+- **OpenAPI Schema**: Available at `/openapi.json`
+
+### Documentation Features
+- Detailed endpoint descriptions with examples
+- Request/response schemas with validation rules
+- Error response specifications
+- Performance monitoring headers
+- Authentication requirements
+- Rate limiting information
+
+### API Endpoints
+- `POST /question` - Send questions to LLM with comprehensive error handling
+- `GET /health` - Health check with system status
+- `GET /docs` - Interactive API documentation
+- `GET /redoc` - Alternative documentation interface
+
+### Response Headers
+Every API response includes performance metrics:
+- `X-Process-Time` - Request processing time
+- `X-Memory-Used` - Current memory usage
+- `X-Memory-Delta` - Memory change per request
+
+## 🐳 Docker Containerization
+
+Complete containerization solution with production-ready configuration:
+
+```bash
+# Quick start - Production
+just docker-run
+
+# Development with hot reload
+just docker-dev
+
+# With Redis caching
+just docker-cache
+
+# With Nginx reverse proxy
+just docker-proxy
+```
+
+### Features
+- **Multi-stage builds** for optimized images (~200MB)
+- **Security-hardened** containers (non-root user)
+- **Health checks** and monitoring
+- **Development environments** with hot reload
+- **Production-ready** with reverse proxy and caching
+- **CI/CD integration** examples
+
+### Deployment Options
+- Standalone Docker containers
+- Docker Compose for multi-service setup
+- Kubernetes deployment manifests
+- AWS ECS task definitions
+- Nginx reverse proxy with rate limiting
+
+See `DOCKER.md` for complete containerization guide.
+

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Профилирование памяти для API запросов.
+Memory profiling for API requests.
 """
 
 import asyncio
@@ -11,19 +11,19 @@ import httpx
 
 @profile
 async def test_memory_usage():
-    """Тестирует использование памяти при API запросах."""
-    print("🧠 Начинаем профилирование памяти...")
+    """Test memory usage during API requests."""
+    print("🧠 Starting memory profiling...")
 
     async with httpx.AsyncClient() as client:
-        # Проверка доступности API
+        # Check API availability
         try:
             response = await client.get("http://localhost:8000/health", timeout=5.0)
-            print(f"✅ API доступен: {response.status_code}")
+            print(f"✅ API available: {response.status_code}")
         except Exception as e:
-            print(f"❌ API недоступен: {e}")
+            print(f"❌ API unavailable: {e}")
             return
 
-        # Тестовые запросы
+        # Test questions
         questions = [
             "Hello!",
             "What is artificial intelligence?",
@@ -32,9 +32,9 @@ async def test_memory_usage():
             "Write a short story",
         ]
 
-        # Последовательные запросы
-        for i, question in enumerate(questions, 1):
-            print(f"📤 Запрос {i}: {question[:30]}...")
+        # Sequential requests
+        for i, question in enumerate(questions, start=1):
+            print(f"📤 Request {i}: {question[:30]}...")
 
             try:
                 start_time = time.perf_counter()
@@ -45,15 +45,15 @@ async def test_memory_usage():
                 )
                 end_time = time.perf_counter()
 
-                print(f"✅ Ответ получен за {end_time - start_time:.2f}s")
+                print(f"✅ Response received in {end_time - start_time:.2f}s")
 
             except Exception as e:
-                print(f"❌ Ошибка: {e}")
+                print(f"❌ Error: {e}")
 
-            # Пауза между запросами
+            # Pause between requests
             await asyncio.sleep(1)
 
-    print("🏁 Профилирование памяти завершено!")
+    print("🏁 Memory profiling completed!")
 
 
 if __name__ == "__main__":

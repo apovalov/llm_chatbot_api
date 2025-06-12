@@ -11,3 +11,9 @@ locust.log
 *.png
 profile_*.json
 results/
+
+# Docker and nginx
+nginx/ssl/
+*.crt
+*.key
+*.pem

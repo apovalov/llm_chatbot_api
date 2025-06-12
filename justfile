@@ -54,3 +54,46 @@ profile-full:
     echo "2. Профилирование памяти..."
     uv run python -m memory_profiler memory_profiler.py
     echo "✅ Профилирование завершено!"
+
+# ────────────────────────────────────────
+# Docker commands
+docker-build:
+    docker build -t llm-chatbot-api .
+
+# Build and run in production mode
+docker-run:
+    docker-compose up --build
+
+# Run in development mode with hot reload
+docker-dev:
+    docker-compose --profile dev up --build api-dev
+
+# Run with caching (Redis)
+docker-cache:
+    docker-compose --profile cache up --build
+
+# Run with reverse proxy
+docker-proxy:
+    docker-compose --profile proxy up --build
+
+# Stop all containers
+docker-stop:
+    docker-compose down
+
+# Clean up containers and images
+docker-clean:
+    docker-compose down --volumes --rmi all
+    docker system prune -f
+
+# View logs
+docker-logs SERVICE="api":
+    docker-compose logs -f {{SERVICE}}
+
+# Run tests in Docker
+docker-test:
+    docker build --target builder -t llm-chatbot-api:test .
+    docker run --rm llm-chatbot-api:test uv run pytest
+
+# Shell into running container
+docker-shell:
+    docker exec -it llm-chatbot-api /bin/bash
