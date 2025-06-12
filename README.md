@@ -141,3 +141,29 @@ API automatically retries requests on temporary errors:
 - **Tenacity** - smart request retries
 - **pytest** - testing
 
+## 📊 Load Testing
+
+The project includes comprehensive load testing with **Locust**:
+
+```bash
+# Interactive testing with web UI
+just loadtest-start
+
+# Quick test (10 users, 30 seconds)
+just loadtest-quick
+
+# Load test (50 users, 2 minutes)
+just loadtest-heavy
+
+# Stress test (100 users, 5 minutes)
+just loadtest-stress
+```
+
+### Results Summary
+- **Throughput**: ~1.3 requests/second
+- **Response Time**: 3-20 seconds (LLM dependent)
+- **Reliability**: 0% error rate
+- **Health Checks**: <5ms response time
+
+See `LOAD_TESTING.md` for detailed instructions and `PERFORMANCE_REPORT.md` for analysis.
+
