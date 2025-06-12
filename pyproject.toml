@@ -17,6 +17,10 @@ dependencies = [
     "tenacity>=9.1.2",
     "uvicorn>=0.34.3",
     "locust>=2.32.0",
+    "py-spy>=0.3.14",
+    "memory-profiler>=0.61.0",
+    "psutil>=6.1.0",
+    "matplotlib>=3.8.0",
 ]
 
 [tool.pytest.ini_options]

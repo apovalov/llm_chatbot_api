@@ -31,3 +31,26 @@ loadtest-heavy:
 # Stress test (100 users)
 loadtest-stress:
     uv run locust --host=http://localhost:8000 --users 100 --spawn-rate 10 --run-time 5m --headless --csv=results/stress --html=results/stress-report.html
+
+# ────────────────────────────────────────
+# Performance profiling
+profile-benchmark:
+    uv run python benchmark.py
+
+# Memory profiling
+profile-memory:
+    uv run python -m memory_profiler memory_profiler.py
+
+# CPU profiling with py-spy (requires server PID)
+profile-cpu PID:
+    uv run py-spy record -o results/cpu_profile.svg -d 30 -p {{PID}}
+
+# Full system profiling
+profile-full:
+    #!/usr/bin/env bash
+    echo "🚀 Запуск полного профилирования..."
+    echo "1. Запускаем benchmark..."
+    uv run python benchmark.py
+    echo "2. Профилирование памяти..."
+    uv run python -m memory_profiler memory_profiler.py
+    echo "✅ Профилирование завершено!"

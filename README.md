@@ -167,3 +167,35 @@ just loadtest-stress
 
 See `LOAD_TESTING.md` for detailed instructions and `PERFORMANCE_REPORT.md` for analysis.
 
+## 🔍 Performance Profiling
+
+The project includes comprehensive performance profiling tools:
+
+```bash
+# Automated benchmark testing
+just profile-benchmark
+
+# Memory usage profiling
+just profile-memory
+
+# CPU profiling (requires server PID)
+just profile-cpu 12345
+
+# Full profiling suite
+just profile-full
+```
+
+### Built-in Metrics
+Every API response includes performance headers:
+- `X-Process-Time` - Request processing time (seconds)
+- `X-Memory-Used` - Memory usage (MB)
+- `X-Memory-Delta` - Memory change per request (MB)
+
+### Results Summary
+- **Reliability**: 100% success rate
+- **Response Time**: 2.6-13 seconds (avg: 5.95s)
+- **Memory Usage**: ~78MB (stable, no leaks)
+- **Bottleneck**: LLM provider response time
+
+See `PROFILING.md` for complete documentation and `PROFILING_REPORT.md` for latest analysis.
+
