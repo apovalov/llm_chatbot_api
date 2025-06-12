@@ -1,5 +1,6 @@
 """Async client for OpenAI-compatible LLM APIs."""
 
+import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any, Dict, List
@@ -11,6 +12,8 @@ from tenacity import (
     retry_if_exception_type,
 )
 from app.settings import Settings
+
+logger = logging.getLogger(__name__)
 
 
 class LLMClient:
@@ -27,6 +30,11 @@ class LLMClient:
         reraise=True,
     )
     async def ask(self, question: str) -> str:
+        logger.info("=== LLM REQUEST ===")
+        logger.info(f"Model: {self._settings.llm_model}")
+        logger.info(f"Base URL: {self._settings.llm_base_url}")
+        logger.info(f"Question length: {len(question)} chars")
+
         # Prepare messages with optional system prompt
         messages: List[Dict[str, str]] = []
         if self._settings.llm_system_prompt:

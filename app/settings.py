@@ -62,6 +62,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
+        case_sensitive=False,
     )
 
     @field_validator("llm_base_url")
@@ -70,8 +71,11 @@ class Settings(BaseSettings):
         """Validate that base URL is a proper HTTP/HTTPS URL."""
         if not v.startswith(("http://", "https://")):
             raise ValueError("Base URL must start with http:// or https://")
-        if not v.endswith("/v1"):
-            raise ValueError("Base URL should end with /v1 for OpenAI compatibility")
+        # Allow different OpenAI-compatible endpoints (not just /v1)
+        if not (v.endswith("/v1") or "/openai" in v or "localhost" in v):
+            raise ValueError(
+                "Base URL should be OpenAI-compatible (end with /v1 or contain 'openai')"
+            )
         return v
 
 

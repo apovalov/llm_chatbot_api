@@ -15,6 +15,16 @@ from app.logging_config import setup_logging
 setup_logging()
 logger = logging.getLogger(__name__)
 
+# Log settings on startup
+settings = get_settings()
+logger.info("=== НАСТРОЙКИ ПРИЛОЖЕНИЯ ===")
+logger.info(f"Model: {settings.llm_model}")
+logger.info(f"Base URL: {settings.llm_base_url}")
+logger.info(f"API Key: {'*' * 10 + settings.llm_api_key.get_secret_value()[-4:]}")
+logger.info(f"Temperature: {settings.llm_temperature}")
+logger.info(f"Max tokens: {settings.llm_max_tokens}")
+logger.info(f"System prompt: {settings.llm_system_prompt}")
+logger.info("==============================")
 
 app = FastAPI(title="LLM Chatbot API", version="0.1.0")
 
