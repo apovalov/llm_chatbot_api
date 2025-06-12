@@ -96,12 +96,11 @@ async def test_optional_max_tokens():
     llm_client = LLMClient(mock_client, settings)
     await llm_client.ask("Test question")
 
-    # Проверяем что max_tokens передается как None
+    # Проверяем что max_tokens не передается, если значение не задано
     mock_client.chat.completions.create.assert_called_once_with(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": "Test question"}],
         temperature=0.5,
-        max_tokens=None,
     )
 
 

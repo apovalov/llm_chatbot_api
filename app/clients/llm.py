@@ -34,15 +34,10 @@ class LLMClient:
         }
 
         # Добавляем max_tokens если указан
-        if self._settings.llm_max_tokens:
+        if self._settings.llm_max_tokens is not None:
             create_params["max_tokens"] = self._settings.llm_max_tokens
 
-        response = await self._client.chat.completions.create(
-            model=create_params["model"],
-            messages=create_params["messages"],  # type: ignore
-            temperature=create_params["temperature"],
-            max_tokens=create_params.get("max_tokens"),
-        )
+        response = await self._client.chat.completions.create(**create_params)
 
         # Валидация ответа
         if not response.choices:
