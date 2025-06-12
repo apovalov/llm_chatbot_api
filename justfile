@@ -8,7 +8,7 @@ server:
 
 # Run unit tests
 test:
-    PYTHONPATH=. uv run pytest
+    uv run pytest
 
 # Static analysis + autoformat
 lint:

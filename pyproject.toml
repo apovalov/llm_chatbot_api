@@ -16,3 +16,9 @@ dependencies = [
     "tenacity>=9.1.2",
     "uvicorn>=0.34.3",
 ]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "-q -ra"
+pythonpath = ["."]
+testpaths = ["tests"]
