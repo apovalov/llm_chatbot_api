@@ -9,11 +9,11 @@ from tests.test_helpers import create_mock_response
 
 
 def test_ok_sync(client: TestClient, mock_openai_client) -> None:
-    """Синхронный тест с моканием OpenAI."""
+    """Synchronous test with OpenAI mocking."""
     with patch("app.clients.llm.AsyncOpenAI") as mock_openai_class:
         mock_openai_class.return_value = mock_openai_client
 
-        # Используем helper функцию для создания мок ответа
+        # Use helper function to create mock response
         mock_openai_client.chat.completions.create.return_value = create_mock_response(
             "Echo: Hello"
         )
@@ -24,11 +24,11 @@ def test_ok_sync(client: TestClient, mock_openai_client) -> None:
 
 
 async def test_ok_async(async_client: AsyncClient, mock_openai_client) -> None:
-    """Асинхронный тест с моканием OpenAI."""
+    """Asynchronous test with OpenAI mocking."""
     with patch("app.clients.llm.AsyncOpenAI") as mock_openai_class:
         mock_openai_class.return_value = mock_openai_client
 
-        # Используем helper функцию для создания мок ответа
+        # Use helper function to create mock response
         mock_openai_client.chat.completions.create.return_value = create_mock_response(
             "Echo: Hello"
         )
@@ -47,17 +47,17 @@ async def test_ok_async(async_client: AsyncClient, mock_openai_client) -> None:
     ],
 )
 def test_validation_errors(client: TestClient, payload: dict) -> None:
-    """Тестируем валидацию входных данных."""
+    """Test input data validation."""
     resp = client.post("/question", json=payload)
     assert resp.status_code == 422
 
 
 def test_llm_error(client: TestClient, mock_openai_client) -> None:
-    """Тестируем обработку ошибок от LLM API."""
+    """Test LLM API error handling."""
     with patch("app.clients.llm.AsyncOpenAI") as mock_openai_class:
         mock_openai_class.return_value = mock_openai_client
 
-        # Настраиваем мок для генерации ошибки
+        # Configure mock to generate error
         mock_openai_client.chat.completions.create.side_effect = Exception(
             "Test LLM error"
         )

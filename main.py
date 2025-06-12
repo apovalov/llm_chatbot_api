@@ -3,7 +3,7 @@ from app.main import app
 
 
 def main():
-    """Запуск FastAPI приложения."""
+    """Start FastAPI application."""
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
 

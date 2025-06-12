@@ -8,17 +8,17 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Настройки приложения для работы с различными OpenAI-совместимыми API.
+    """Application settings for working with various OpenAI-compatible APIs.
 
-    Поддерживаемые провайдеры:
-    - OpenAI (по умолчанию)
-    - Ollama (локальный)
+    Supported providers:
+    - OpenAI (default)
+    - Ollama (local)
     - Mistral AI
-    - Google Gemini (через OpenAI-compatible endpoint)
-    - Anthropic Claude (через прокси)
-    - LocalAI (самохостинг)
+    - Google Gemini (via OpenAI-compatible endpoint)
+    - Anthropic Claude (via proxy)
+    - LocalAI (self-hosted)
     - Groq
-    - Любые другие OpenAI-compatible API
+    - Any other OpenAI-compatible APIs
     """
 
     # OpenAI-compatible API endpoint
@@ -27,27 +27,34 @@ class Settings(BaseSettings):
         description="Base URL for OpenAI-compatible API",
     )
 
-    # Модель для использования (зависит от провайдера)
+    # Model to use (depends on provider)
     llm_model: str = Field(
         default="gpt-4o-mini", min_length=1, description="Model name to use"
     )
 
-    # API ключ (для некоторых провайдеров может быть произвольным)
+    # API key (can be arbitrary for some providers)
     llm_api_key: SecretStr = Field(
         ..., min_length=1, description="API key for LLM provider"
     )
 
-    # Максимальное количество токенов в ответе (опционально)
+    # Maximum number of tokens in response (optional)
     llm_max_tokens: Optional[int] = Field(
         default=None, gt=0, le=100000, description="Maximum tokens in response"
     )
 
-    # Температура для генерации (0.0 - 2.0)
+    # Temperature for generation (0.0 - 2.0)
     llm_temperature: float = Field(
         default=0.7, ge=0.0, le=2.0, description="Temperature for generation"
     )
 
-    # Таймаут HTTP запросов
+    # System prompt for LLM (optional)
+    llm_system_prompt: Optional[str] = Field(
+        default=None,
+        max_length=4096,
+        description="System prompt for LLM (optional)",
+    )
+
+    # HTTP request timeout
     request_timeout: float = Field(
         default=30.0, gt=0.0, le=300.0, description="HTTP request timeout in seconds"
     )

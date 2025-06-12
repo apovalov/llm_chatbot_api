@@ -11,7 +11,7 @@ from app.settings import get_settings
 from app.clients.llm import LLMClient, llm_client_lifespan
 from app.logging_config import setup_logging
 
-# Настройка логгирования
+# Setup logging
 setup_logging()
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ async def ask_question(
     q: Question,
     llm: LLMClient = Depends(get_llm_client),
 ) -> Answer:
-    """Отправка вопроса к LLM модели."""
+    """Send question to LLM model."""
     logger.info(f"Received question with length: {len(q.text)}")
 
     try:

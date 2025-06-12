@@ -1,44 +1,44 @@
 # LLM Chatbot API
 
-Асинхронный REST API для работы с различными OpenAI-совместимыми LLM провайдерами.
+Asynchronous REST API for working with various OpenAI-compatible LLM providers.
 
-## 🚀 Поддерживаемые провайдеры
+## 🚀 Supported Providers
 
 - **OpenAI** (GPT-4, GPT-3.5)
-- **Ollama** (локальные модели)
+- **Ollama** (local models)
 - **Mistral AI**
 - **Groq**
-- **LocalAI** (самохостинг)
-- **Google Gemini** (через OpenAI-compatible endpoint)
-- **Anthropic Claude** (через прокси)
-- Любые другие OpenAI-compatible API
+- **LocalAI** (self-hosted)
+- **Google Gemini** (via OpenAI-compatible endpoint)
+- **Anthropic Claude** (via proxy)
+- Any other OpenAI-compatible APIs
 
-## ⚙️ Настройка
+## ⚙️ Setup
 
-### 1. Установка зависимостей
+### 1. Install Dependencies
 
 ```bash
 uv sync
 ```
 
-### 2. Конфигурация
+### 2. Configuration
 
-Создайте файл `.env` на основе `env.example`:
+Create `.env` file based on `env.example`:
 
 ```bash
 cp env.example .env
 ```
 
-### 3. Настройка провайдеров
+### 3. Provider Configuration
 
-#### OpenAI (по умолчанию)
+#### OpenAI (default)
 ```env
 LLM_BASE_URL=https://api.openai.com/v1
 LLM_MODEL=gpt-4o-mini
 LLM_API_KEY=sk-your-openai-api-key
 ```
 
-#### Ollama (локальный)
+#### Ollama (local)
 ```env
 LLM_BASE_URL=http://localhost:11434/v1
 LLM_MODEL=llama3.2
@@ -59,29 +59,32 @@ LLM_MODEL=llama-3.1-70b-versatile
 LLM_API_KEY=your-groq-api-key
 ```
 
-### 4. Дополнительные параметры
+### 4. Additional Parameters
 
 ```env
-# Температура генерации (0.0 - 2.0)
+# System prompt for the model (optional)
+LLM_SYSTEM_PROMPT="You are a helpful AI assistant. Be polite and informative in your responses."
+
+# Generation temperature (0.0 - 2.0)
 LLM_TEMPERATURE=0.7
 
-# Максимальное количество токенов (опционально)
+# Maximum number of tokens (optional)
 LLM_MAX_TOKENS=1000
 
-# Таймаут запросов (секунды)
+# Request timeout (seconds)
 REQUEST_TIMEOUT=30.0
 ```
 
-## 🛠️ Команды
+## 🛠️ Commands
 
 ```bash
-# Запуск сервера
+# Start server
 just server
 
-# Запуск тестов
+# Run tests
 just test
 
-# Проверка кода
+# Check code
 just lint
 ```
 
@@ -89,52 +92,52 @@ just lint
 
 ### POST /question
 
-Отправка вопроса к LLM модели.
+Send a question to the LLM model.
 
 **Request:**
 ```json
 {
-  "text": "Привет! Как дела?"
+  "text": "Hello! How are you?"
 }
 ```
 
 **Response:**
 ```json
 {
-  "text": "Привет! У меня всё хорошо, спасибо! Как ваши дела?"
+  "text": "Hello! I'm doing well, thank you! How are you doing?"
 }
 ```
 
 ### Swagger UI
 
-Интерактивная документация API доступна по адресу: `http://localhost:8000/docs`
+Interactive API documentation is available at: `http://localhost:8000/docs`
 
-## 🧪 Тестирование
+## 🧪 Testing
 
-Проект включает полный набор тестов:
+The project includes a comprehensive test suite:
 
-- ✅ Валидация входных данных
-- ✅ Проверка длины текста
-- ✅ Мокирование LLM ответов
-- ✅ Обработка ошибок API
-- ✅ Тестирование разных провайдеров
-- ✅ Специфичные retry логики для RateLimitError и InternalServerError
-- ✅ Проверка отсутствия retry для AuthenticationError
+- ✅ Input data validation
+- ✅ Text length verification
+- ✅ LLM response mocking
+- ✅ API error handling
+- ✅ Testing different providers
+- ✅ Specific retry logic for RateLimitError and InternalServerError
+- ✅ Verification of no retry for AuthenticationError
 
-## 🔄 Retry логика
+## 🔄 Retry Logic
 
-API автоматически повторяет запросы при временных ошибках:
+API automatically retries requests on temporary errors:
 
-- **Повторы**: максимум 3 попытки
-- **Задержка**: экспоненциальная (1с, 2с, 4с, 8с макс)
-- **Условия**: только при `RateLimitError` и `InternalServerError`
-- **Исключения**: `AuthenticationError` и другие ошибки не повторяются
+- **Retries**: maximum 3 attempts
+- **Delay**: exponential (1s, 2s, 4s, 8s max)
+- **Conditions**: only for `RateLimitError` and `InternalServerError`
+- **Exceptions**: `AuthenticationError` and other errors are not retried
 
-## 🏗️ Архитектура
+## 🏗️ Architecture
 
-- **FastAPI** - современный веб-фреймворк
-- **AsyncOpenAI** - официальный SDK для OpenAI API
-- **Pydantic** - валидация данных
-- **Tenacity** - умные повторные попытки запросов
-- **pytest** - тестирование
+- **FastAPI** - modern web framework
+- **AsyncOpenAI** - official SDK for OpenAI API
+- **Pydantic** - data validation
+- **Tenacity** - smart request retries
+- **pytest** - testing
 

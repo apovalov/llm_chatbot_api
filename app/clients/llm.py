@@ -1,7 +1,8 @@
-"""Асинхронный клиент для OpenAI-совместимых LLM API."""
+"""Async client for OpenAI-compatible LLM APIs."""
 
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from typing import Any, Dict, List
 from openai import AsyncOpenAI, RateLimitError, InternalServerError
 from tenacity import (
     retry,
@@ -13,7 +14,7 @@ from app.settings import Settings
 
 
 class LLMClient:
-    """Обертка над OpenAI API с логикой повторных попыток."""
+    """Wrapper over OpenAI API with retry logic."""
 
     def __init__(self, client: AsyncOpenAI, settings: Settings) -> None:
         self._client = client
@@ -26,20 +27,28 @@ class LLMClient:
         reraise=True,
     )
     async def ask(self, question: str) -> str:
-        # Подготавливаем базовые параметры запроса
-        create_params = {
+        # Prepare messages with optional system prompt
+        messages: List[Dict[str, str]] = []
+        if self._settings.llm_system_prompt:
+            messages.append(
+                {"role": "system", "content": self._settings.llm_system_prompt}
+            )
+        messages.append({"role": "user", "content": question})
+
+        # Prepare basic request parameters
+        create_params: Dict[str, Any] = {
             "model": self._settings.llm_model,
-            "messages": [{"role": "user", "content": question}],
+            "messages": messages,
             "temperature": self._settings.llm_temperature,
         }
 
-        # Добавляем max_tokens если указан
+        # Add max_tokens if specified
         if self._settings.llm_max_tokens is not None:
             create_params["max_tokens"] = self._settings.llm_max_tokens
 
         response = await self._client.chat.completions.create(**create_params)
 
-        # Валидация ответа
+        # Response validation
         if not response.choices:
             raise ValueError("No response choices received from LLM")
 
@@ -52,7 +61,7 @@ class LLMClient:
 
 @asynccontextmanager
 async def llm_client_lifespan(settings: Settings) -> AsyncGenerator[LLMClient, None]:
-    """Создает AsyncOpenAI клиент и возвращает LLMClient."""
+    """Creates AsyncOpenAI client and returns LLMClient."""
     client = AsyncOpenAI(
         api_key=settings.llm_api_key.get_secret_value(),
         base_url=settings.llm_base_url,

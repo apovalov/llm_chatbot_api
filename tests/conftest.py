@@ -10,19 +10,19 @@ from tests.test_helpers import create_mock_openai_client
 
 @pytest.fixture
 def mock_openai_client():
-    """Мокаем AsyncOpenAI клиент."""
+    """Mock AsyncOpenAI client."""
     return create_mock_openai_client()
 
 
 @pytest.fixture
 def client():
-    """Создаем синхронный тест-клиент для FastAPI."""
+    """Create synchronous test client for FastAPI."""
     return TestClient(fastapi_app)
 
 
 @pytest.fixture
 async def async_client() -> AsyncGenerator[AsyncClient, None]:
-    """Создаем асинхронный тест-клиент для FastAPI."""
+    """Create asynchronous test client for FastAPI."""
     from httpx import ASGITransport
 
     async with AsyncClient(

@@ -1,4 +1,4 @@
-"""Тесты для разных OpenAI-совместимых провайдеров."""
+"""Tests for different OpenAI-compatible providers."""
 
 import pytest
 from unittest.mock import AsyncMock
@@ -24,9 +24,9 @@ from app.clients.llm import LLMClient
     ],
 )
 async def test_different_providers_settings(provider_name, base_url, model, api_key):
-    """Тестируем что настройки правильно конфигурируются для разных провайдеров."""
+    """Test that settings are correctly configured for different providers."""
 
-    # Создаем настройки для конкретного провайдера
+    # Create settings for specific provider
     settings = Settings(
         llm_base_url=base_url,
         llm_model=model,
@@ -35,7 +35,7 @@ async def test_different_providers_settings(provider_name, base_url, model, api_
         llm_max_tokens=1000,
     )
 
-    # Проверяем что настройки правильно установлены
+    # Check that settings are correctly set
     assert settings.llm_base_url == base_url
     assert settings.llm_model == model
     assert settings.llm_api_key.get_secret_value() == api_key
@@ -44,7 +44,7 @@ async def test_different_providers_settings(provider_name, base_url, model, api_
 
 
 async def test_llm_client_with_settings():
-    """Тестируем что LLMClient правильно использует настройки."""
+    """Test that LLMClient correctly uses settings."""
 
     settings = Settings(
         llm_base_url="https://api.openai.com/v1",
@@ -54,19 +54,19 @@ async def test_llm_client_with_settings():
         llm_max_tokens=500,
     )
 
-    # Мокаем AsyncOpenAI клиент
+    # Mock AsyncOpenAI client
     mock_client = AsyncMock()
     mock_response = AsyncMock()
     mock_response.choices = [AsyncMock(message=AsyncMock(content="Test response"))]
     mock_client.chat.completions.create.return_value = mock_response
 
-    # Создаем LLM клиент
+    # Create LLM client
     llm_client = LLMClient(mock_client, settings)
 
-    # Тестируем запрос
+    # Test request
     response = await llm_client.ask("Test question")
 
-    # Проверяем что используются правильные параметры
+    # Check that correct parameters are used
     mock_client.chat.completions.create.assert_called_once_with(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": "Test question"}],
@@ -78,14 +78,14 @@ async def test_llm_client_with_settings():
 
 
 async def test_optional_max_tokens():
-    """Тестируем что max_tokens является опциональным параметром."""
+    """Test that max_tokens is an optional parameter."""
 
     settings = Settings(
         llm_base_url="https://api.openai.com/v1",
         llm_model="gpt-4o-mini",
         llm_api_key="test",
         llm_temperature=0.5,
-        llm_max_tokens=None,  # Не устанавливаем max_tokens
+        llm_max_tokens=None,  # Don't set max_tokens
     )
 
     mock_client = AsyncMock()
@@ -96,7 +96,7 @@ async def test_optional_max_tokens():
     llm_client = LLMClient(mock_client, settings)
     await llm_client.ask("Test question")
 
-    # Проверяем что max_tokens не передается, если значение не задано
+    # Check that max_tokens is not passed if value is not set
     mock_client.chat.completions.create.assert_called_once_with(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": "Test question"}],
@@ -105,7 +105,7 @@ async def test_optional_max_tokens():
 
 
 async def test_retry_on_rate_limit_error():
-    """Тестируем что retry происходит при RateLimitError."""
+    """Test that retry happens on RateLimitError."""
     settings = Settings(
         llm_base_url="https://api.openai.com/v1",
         llm_model="gpt-4o-mini",
@@ -115,11 +115,11 @@ async def test_retry_on_rate_limit_error():
 
     mock_client = AsyncMock()
 
-    # Создаем мок для response
+    # Create mock for response
     mock_response_obj = AsyncMock()
     mock_response_obj.request = AsyncMock()
 
-    # Первые два вызова генерируют RateLimitError, третий успешен
+    # First two calls generate RateLimitError, third is successful
     mock_success_response = AsyncMock()
     mock_success_response.choices = [
         AsyncMock(message=AsyncMock(content="Success after retry"))
@@ -134,13 +134,13 @@ async def test_retry_on_rate_limit_error():
     llm_client = LLMClient(mock_client, settings)
     response = await llm_client.ask("Test question")
 
-    # Проверяем что было 3 попытки и получен успешный ответ
+    # Check that there were 3 attempts and successful response received
     assert mock_client.chat.completions.create.call_count == 3
     assert response == "Success after retry"
 
 
 async def test_retry_on_internal_server_error():
-    """Тестируем что retry происходит при InternalServerError."""
+    """Test that retry happens on InternalServerError."""
     settings = Settings(
         llm_base_url="https://api.openai.com/v1",
         llm_model="gpt-4o-mini",
@@ -150,11 +150,11 @@ async def test_retry_on_internal_server_error():
 
     mock_client = AsyncMock()
 
-    # Создаем мок для response
+    # Create mock for response
     mock_response_obj = AsyncMock()
     mock_response_obj.request = AsyncMock()
 
-    # Первый вызов генерирует InternalServerError, второй успешен
+    # First call generates InternalServerError, second is successful
     mock_success_response = AsyncMock()
     mock_success_response.choices = [
         AsyncMock(message=AsyncMock(content="Success after retry"))
@@ -170,13 +170,13 @@ async def test_retry_on_internal_server_error():
     llm_client = LLMClient(mock_client, settings)
     response = await llm_client.ask("Test question")
 
-    # Проверяем что было 2 попытки и получен успешный ответ
+    # Check that there were 2 attempts and successful response received
     assert mock_client.chat.completions.create.call_count == 2
     assert response == "Success after retry"
 
 
 async def test_no_retry_on_authentication_error():
-    """Тестируем что retry НЕ происходит при AuthenticationError."""
+    """Test that retry does NOT happen on AuthenticationError."""
     settings = Settings(
         llm_base_url="https://api.openai.com/v1",
         llm_model="gpt-4o-mini",
@@ -186,11 +186,11 @@ async def test_no_retry_on_authentication_error():
 
     mock_client = AsyncMock()
 
-    # Создаем мок для response
+    # Create mock for response
     mock_response_obj = AsyncMock()
     mock_response_obj.request = AsyncMock()
 
-    # Генерируем AuthenticationError - retry не должен происходить
+    # Generate AuthenticationError - retry should not happen
     auth_error = AuthenticationError(
         "Invalid API key", response=mock_response_obj, body=None
     )
@@ -198,16 +198,16 @@ async def test_no_retry_on_authentication_error():
 
     llm_client = LLMClient(mock_client, settings)
 
-    # Ожидаем что исключение поднимется сразу без retry
+    # Expect that exception is raised immediately without retry
     with pytest.raises(AuthenticationError):
         await llm_client.ask("Test question")
 
-    # Проверяем что была только одна попытка
+    # Check that there was only one attempt
     assert mock_client.chat.completions.create.call_count == 1
 
 
 async def test_retry_exhausted_raises_original_error():
-    """Тестируем что после исчерпания retry поднимается оригинальная ошибка."""
+    """Test that original error is raised after retry exhaustion."""
     settings = Settings(
         llm_base_url="https://api.openai.com/v1",
         llm_model="gpt-4o-mini",
@@ -217,11 +217,11 @@ async def test_retry_exhausted_raises_original_error():
 
     mock_client = AsyncMock()
 
-    # Создаем мок для response
+    # Create mock for response
     mock_response_obj = AsyncMock()
     mock_response_obj.request = AsyncMock()
 
-    # Все попытки завершаются RateLimitError (используем список вместо одиночного исключения)
+    # All attempts end with RateLimitError (using list instead of single exception)
     rate_limit_error = RateLimitError(
         "Rate limit exceeded", response=mock_response_obj, body=None
     )
@@ -233,9 +233,94 @@ async def test_retry_exhausted_raises_original_error():
 
     llm_client = LLMClient(mock_client, settings)
 
-    # Ожидаем что после 3 попыток поднимется RateLimitError
+    # Expect that RateLimitError is raised after 3 attempts
     with pytest.raises(RateLimitError):
         await llm_client.ask("Test question")
 
-    # Проверяем что было ровно 3 попытки
+    # Check that there were exactly 3 attempts
     assert mock_client.chat.completions.create.call_count == 3
+
+
+async def test_system_prompt_is_used():
+    """Test that system prompt is added to messages when specified."""
+    settings = Settings(
+        llm_base_url="https://api.openai.com/v1",
+        llm_model="gpt-4o-mini",
+        llm_api_key="test",
+        llm_temperature=0.5,
+        llm_system_prompt="You are a helpful assistant.",
+    )
+
+    mock_client = AsyncMock()
+    mock_response = AsyncMock()
+    mock_response.choices = [AsyncMock(message=AsyncMock(content="Test response"))]
+    mock_client.chat.completions.create.return_value = mock_response
+
+    llm_client = LLMClient(mock_client, settings)
+    await llm_client.ask("Test question")
+
+    # Check that system prompt is added to messages
+    mock_client.chat.completions.create.assert_called_once_with(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Test question"},
+        ],
+        temperature=0.5,
+    )
+
+
+async def test_no_system_prompt_when_not_set():
+    """Test that system prompt is not added when not specified."""
+    settings = Settings(
+        llm_base_url="https://api.openai.com/v1",
+        llm_model="gpt-4o-mini",
+        llm_api_key="test",
+        llm_temperature=0.5,
+        llm_system_prompt=None,  # Explicitly don't set
+    )
+
+    mock_client = AsyncMock()
+    mock_response = AsyncMock()
+    mock_response.choices = [AsyncMock(message=AsyncMock(content="Test response"))]
+    mock_client.chat.completions.create.return_value = mock_response
+
+    llm_client = LLMClient(mock_client, settings)
+    await llm_client.ask("Test question")
+
+    # Check that only user message is present
+    mock_client.chat.completions.create.assert_called_once_with(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": "Test question"},
+        ],
+        temperature=0.5,
+    )
+
+
+async def test_empty_system_prompt_not_used():
+    """Test that empty system prompt is not added."""
+    settings = Settings(
+        llm_base_url="https://api.openai.com/v1",
+        llm_model="gpt-4o-mini",
+        llm_api_key="test",
+        llm_temperature=0.5,
+        llm_system_prompt="",  # Empty string
+    )
+
+    mock_client = AsyncMock()
+    mock_response = AsyncMock()
+    mock_response.choices = [AsyncMock(message=AsyncMock(content="Test response"))]
+    mock_client.chat.completions.create.return_value = mock_response
+
+    llm_client = LLMClient(mock_client, settings)
+    await llm_client.ask("Test question")
+
+    # Check that only user message is present (empty string is considered falsy)
+    mock_client.chat.completions.create.assert_called_once_with(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": "Test question"},
+        ],
+        temperature=0.5,
+    )
